@@ -8,6 +8,19 @@ pub struct Output {
 }
 
 #[wasm_bindgen]
+impl Output {
+    #[wasm_bindgen]
+    pub fn stdout(&self) -> String {
+        self.stdout.clone()
+    }
+
+    #[wasm_bindgen]
+    pub fn result(&self) -> String {
+        self.result.clone()
+    }
+}
+
+#[wasm_bindgen]
 pub struct WState(state::State);
 
 #[wasm_bindgen]
