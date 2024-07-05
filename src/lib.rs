@@ -32,13 +32,13 @@ impl WState {
 }
 
 #[wasm_bindgen]
-pub fn run_line(line: String, state: WState) -> Result<Output, String> {
+pub fn run_line(line: String, state: &mut WState) -> Result<Output, String> {
     let mut statements = lex(&line).and_then(parse).map_err(handle_err)?;
     let mut stdout: Vec<u8> = vec![];
-    let mut state = state.0;
+    let state = &mut state.0;
 
     let st = statements.pop().unwrap();
-    let val = st.eval(&mut state, &mut stdout).map_err(handle_err)?;
+    let val = st.eval(state, &mut stdout).map_err(handle_err)?;
     let result = format!("{val}");
 
     Ok(Output {
