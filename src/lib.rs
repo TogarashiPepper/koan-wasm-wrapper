@@ -35,12 +35,3 @@ pub fn run_line(line: String, state: WState) -> Result<Output, String> {
     })
 }
 
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, koan-wasm-wrapper!");
-}
