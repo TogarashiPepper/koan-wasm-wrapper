@@ -1,4 +1,4 @@
-use koan::{error::handle_err, lexer::lex, parser::parse, state};
+use koan::{error::handle_err, interpreter::IntrpCtx, lexer::lex, parser::parse, state};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -33,12 +33,16 @@ impl WState {
 
 #[wasm_bindgen]
 pub fn run_line(line: String, state: &mut WState) -> Result<Output, String> {
-    let mut statements = lex(&line).and_then(parse).map_err(handle_err)?;
+    let (mut statements, pool) = lex(&line).and_then(parse).map_err(handle_err)?;
     let mut stdout: Vec<u8> = vec![];
-    let state = &mut state.0;
+    let mut ctx = IntrpCtx {
+        writer: &mut stdout,
+        state: &mut state.0,
+        pool: &pool,
+    };
 
     let st = statements.pop().unwrap();
-    let val = st.eval(state, &mut stdout).map_err(handle_err)?;
+    let val = ctx.eval_ast(st).map_err(handle_err)?;
     let result = format!("{val}");
 
     Ok(Output {
@@ -47,4 +51,3 @@ pub fn run_line(line: String, state: &mut WState) -> Result<Output, String> {
         result,
     })
 }
-
